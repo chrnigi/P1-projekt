@@ -210,3 +210,11 @@ void data_print_function(void)
     }
 }
 
+
+void graph_draw(void)
+{
+    GraphParams input = graph_input();
+    
+    graph_exec(input);
+}
+
