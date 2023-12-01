@@ -1,8 +1,10 @@
 typedef enum GraphTypes {
     SCATTERPLOT,
+    COMPARISON,
     MAX_GRAPH_TYPE,
     
 } GraphTypes;
+// Changes made to this enum must also be reflected in the graph_type_strings array in drawGraph.c
 
 typedef enum DataType {
     LOWPERCENT,
@@ -11,6 +13,8 @@ typedef enum DataType {
     CILCA,
     MAX_DATA_TYPE,
 } DataType;
+// Changes made to this enum must also be reflected in the type_strings char and wchar_t arrays in drawGraph.c
+
 
 typedef struct GraphParams
 {

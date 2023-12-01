@@ -16,31 +16,45 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
     series->ys = datapoints;
     series->ysLength = 24;
 
-
     ScatterPlotSettings *settings = GetDefaultScatterPlotSettings();
     settings->width = 1280;
     settings->height = 720;
     settings->autoBoundaries = true;
     settings->autoPadding = true;
     ScatterPlotSeries *s[] = {series};
+    settings->xLabel = L"Hours";
+    settings->xLabelLength = wcslen(settings->xLabel);
     settings->scatterPlotSeries = s;
     settings->scatterPlotSeriesLength = 1;
 
     wchar_t type_strings[MAX_DATA_TYPE][50] = {
-        {L"Low percent"},
-        {L"Renewable percent"},
-        {L"CI direct"},
-        {L"CI LCA"},
+        {L"Low Percent"},
+        {L"Renewable Percent"},
+        {L"Carbon Intensity Direct"},
+        {L"Carbon Intensity LCA"},
     };
     
     size_t type_strings_len[MAX_DATA_TYPE];
-
+    
     for (int i = 0; i < MAX_DATA_TYPE; i++)
     {
         type_strings_len[i] = wcslen(type_strings[i]);
     }
-    
+    wchar_t wcdate_string[128];
+    char date_string[128];
 
+    strftime(date_string, 128, "%Y/%m/%d ", localtime(&day));
+    mbstowcs(wcdate_string, date_string, 128);
+
+    wcscat(wcdate_string, type_strings[type]);
+
+    settings->title = wcdate_string;
+    settings->titleLength = wcslen(wcdate_string);
+
+
+
+    
+    // Fill hours[] with 0 to 23
     for (int i = 0; i < 24; i++)
     {
         hours[i] = i;
@@ -54,6 +68,7 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
     }
     if(i == 8760) return 1;
     
+    
 
     switch (type)
     {
@@ -63,9 +78,8 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
         {
             datapoints[j] = data[j+i].low_percent;
         }
-
-        settings->title = type_strings[LOWPERCENT];
-        settings->titleLength = type_strings_len[LOWPERCENT];
+        settings->yLabel = L"%";
+        settings->yLabelLength = wcslen(settings->yLabel);
         
     } break;
 
@@ -75,9 +89,8 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
         {
             datapoints[j] = data[j+i].renew_percent;
         }   
-
-        settings->title = type_strings[RENEWPERCENT];
-        settings->titleLength = type_strings_len[RENEWPERCENT];
+        settings->yLabel = L"%";
+        settings->yLabelLength = wcslen(settings->yLabel);
 
     } break;
 
@@ -87,9 +100,8 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
         {
             datapoints[j] = data[j+i].ci_direct;
         }
-
-        settings->title = type_strings[CIDIRECT];
-        settings->titleLength = type_strings_len[CIDIRECT];
+        settings->yLabel = L"gCO2eq";
+        settings->yLabelLength = wcslen(settings->yLabel);
 
     } break;
 
@@ -100,8 +112,8 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
             datapoints[j] = data[j+i].ci_lca;
         }
 
-        settings->title = type_strings[CILCA];
-        settings->titleLength = type_strings_len[CILCA];
+        settings->yLabel = L"gCO2eq";
+        settings->yLabelLength = wcslen(settings->yLabel);
 
     } break;
 
@@ -123,7 +135,8 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
         size_t length;
         double *pngdata = ConvertToPNG(&length, canvasref->image);
         WriteToFile(pngdata, length, "graph.png");
-        DeleteImage(canvasref->image);
+        // Deallocates memory
+        DeleteImage(canvasref->image); 
     }
     else
     {
@@ -141,6 +154,7 @@ GraphParams graph_input()
 
     char GraphType_strings[MAX_GRAPH_TYPE][50] = {
         {"Scatterplot"},
+        {"Comparison"},
     };
 
     char DataType_strings[MAX_DATA_TYPE][50] = {
