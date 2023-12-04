@@ -126,7 +126,6 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
 
     RGBABitmapImageReference *canvasref = CreateRGBABitmapImageReference();
     StringReference *errmsg = CreateStringReference(msg, msglen);
-    successfull_print = DrawScatterPlot(canvasref, 1280, 720, hours, 24, datapoints, 24, errmsg);
     successfull_print = DrawScatterPlotFromSettings(canvasref, settings, errmsg);
 
 
@@ -154,6 +153,7 @@ GraphParams graph_input()
 
     char GraphType_strings[MAX_GRAPH_TYPE][50] = {
         {"Scatterplot"},
+        {"Monthly Average"},
         {"Comparison"},
     };
 
@@ -226,16 +226,83 @@ void graph_exec(GraphParams input)
 {
     int total_rows;
     Datapoint* data = readCSV("datafiler/DK-DK2_2022_hourly.csv", &total_rows, true);
+
     switch (input.graph_type)
     {
     case SCATTERPLOT:
         graph_scatterplot_exec(input.data_type, data, input.day);
-        system("graph.png");
         break;
     
+    case MONTHLYAVERAGE:
+        graph_mon_avg_exec(input.data_type, data);
+        break;
     default:
         break;
     }
 
+    system("graph.png");
     free(data);
+}
+
+int graph_mon_avg_exec(DataType type, Datapoint *data)
+{
+    double months[12];
+    double averages[12];
+
+    for (int i = 0; i < 12; i++) months[i] = i + 1;
+
+    int j = 0;
+    for (size_t i = 0; i < 12; i++)
+    {
+        double sum = 0;
+        int k = 0;
+        while (localtime(&data[j].datetime)->tm_mon == i)
+        {
+            switch (type)
+            {
+            case LOWPERCENT:
+                sum += data[j].low_percent;
+                break;
+            case RENEWPERCENT:
+                sum += data[j].renew_percent;
+                break;
+            case CIDIRECT:
+                sum += data[j].ci_direct;
+                break;
+            case CILCA:
+                sum += data[j].ci_lca;
+                break;
+            default:
+                break;
+            }
+            k++;
+            j++;
+        }
+        averages[i] = sum/k;
+        
+    }
+    
+    wchar_t err[] = L"Error printing monthly average!";
+
+    RGBABitmapImageReference *canvasref = CreateRGBABitmapImageReference();
+    StringReference *errmsg = CreateStringReference(err, wcslen(err));
+    bool success = DrawScatterPlot(canvasref, 1280, 720, months, 12, averages, 12, errmsg);
+
+    if (success) {
+        size_t len;
+        double *pngdata = ConvertToPNG(&len, canvasref->image);
+        WriteToFile(pngdata, len, "graph.png");
+        DeleteImage(canvasref->image);
+    } 
+    else {
+        fprintf(stderr, "Error:");
+        for (int i = 0; i < errmsg->stringLength; i++)
+        {
+            fprintf(stderr, "%c", errmsg->string[i]);
+        }
+        fprintf(stderr, "\n");
+        return 1;
+        
+    }
+    return 0;
 }

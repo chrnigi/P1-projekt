@@ -1,5 +1,6 @@
 typedef enum GraphTypes {
     SCATTERPLOT,
+    MONTHLYAVERAGE,
     COMPARISON,
     MAX_GRAPH_TYPE,
     
@@ -26,3 +27,5 @@ typedef struct GraphParams
 GraphParams graph_input();
 void graph_exec(GraphParams input);
 int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day);
+int graph_mon_avg_exec(DataType type, Datapoint *data);
+int graph_multiple_exec(DataType type, Datapoint *data, time_t day);
