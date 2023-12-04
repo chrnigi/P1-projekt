@@ -26,6 +26,9 @@ typedef struct GraphParams
 
 GraphParams graph_input();
 void graph_exec(GraphParams input);
+
+// Draws a scatterplot for the selected data type for a day.
 int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day);
+// Draws the monthly averages for the entire year. Should maybe be a histogram instead of a scatterplot.
 int graph_mon_avg_exec(DataType type, Datapoint *data);
 int graph_multiple_exec(DataType type, Datapoint *data, time_t day);

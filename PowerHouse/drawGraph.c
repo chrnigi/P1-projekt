@@ -235,6 +235,9 @@ void graph_exec(GraphParams input)
     case SCATTERPLOT:
         graph_scatterplot_exec(input.data_type, data, input.day);
         break;
+
+    case COMPARISON:
+        break;
     
     case MONTHLYAVERAGE:
         graph_mon_avg_exec(input.data_type, data);
