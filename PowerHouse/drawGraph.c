@@ -51,9 +51,6 @@ int graph_scatterplot_exec(DataType type, Datapoint *data, time_t day)
     settings->title = wcdate_string;
     settings->titleLength = wcslen(wcdate_string);
 
-
-
-    
     // Fill hours[] with 0 to 23
     for (int i = 0; i < 24; i++)
     {
@@ -178,7 +175,7 @@ GraphParams graph_input()
     {
         printf("%d. %s\n", i+1, GraphType_strings[i]);
     }
-    
+
     scanf(" %d", &input.graph_type);
     input.graph_type--;
     while (input.graph_type >= MAX_GRAPH_TYPE) 
@@ -210,14 +207,20 @@ GraphParams graph_input()
     printf("You have chosen: ");
     printf("%s\n", DataType_strings[input.data_type]); 
 
-    printf("Which day do you wish to see the graph for?\n");
-    printf("Please input in format yyyy-MM-dd\n");
-    scanf(" %d-%d-%d", &day.tm_year, &day.tm_mon, &day.tm_mday);
+    if (input.graph_type <= SCATTERPLOT)
+    {
+        printf("Which day do you wish to see the graph for?\n");
+        printf("Please input in format yyyy-MM-dd\n");
+        scanf(" %d-%d-%d", &day.tm_year, &day.tm_mon, &day.tm_mday);
     
-    day.tm_year -= 1900;
-    day.tm_mon -= 1;
-    
-    input.day = mktime(&day);
+        day.tm_year -= 1900;
+        day.tm_mon -= 1;
+        input.day = mktime(&day);    
+    }
+    else 
+    {
+        input.day = NULL;
+    }
     
     return input;
 }
