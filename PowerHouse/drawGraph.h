@@ -1,7 +1,7 @@
 typedef enum GraphTypes {
     SCATTERPLOT,
-    MONTHLYAVERAGE,
     COMPARISON,
+    MONTHLYAVERAGE,
     MAX_GRAPH_TYPE,
     
 } GraphTypes;

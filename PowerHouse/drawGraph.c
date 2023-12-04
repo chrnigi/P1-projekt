@@ -150,8 +150,8 @@ GraphParams graph_input()
 
     char GraphType_strings[MAX_GRAPH_TYPE][50] = {
         {"Scatterplot"},
-        {"Monthly Average"},
         {"Comparison"},
+        {"Monthly Average"},
     };
 
     char DataType_strings[MAX_DATA_TYPE][50] = {
@@ -207,7 +207,7 @@ GraphParams graph_input()
     printf("You have chosen: ");
     printf("%s\n", DataType_strings[input.data_type]); 
 
-    if (input.graph_type <= SCATTERPLOT)
+    if (input.graph_type <= COMPARISON)
     {
         printf("Which day do you wish to see the graph for?\n");
         printf("Please input in format yyyy-MM-dd\n");
@@ -221,7 +221,7 @@ GraphParams graph_input()
     {
         input.day = NULL;
     }
-    
+
     return input;
 }
 
