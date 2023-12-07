@@ -242,7 +242,7 @@ void graph_exec(GraphTypes graph_type, DataType data_type, struct tm day)
         DataType second_type;
         scanf(" %d", &second_type);
         second_type -= 1;
-        printf(L"You have chosen: %s\n", type_strings[second_type]);
+        printf("You have chosen: %ls\n", type_strings[second_type]);
 
         graph_comparison_scatter_exec(data_type, second_type, data, &day);
         system("graph.png");

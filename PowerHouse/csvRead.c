@@ -40,8 +40,6 @@ Datapoint* readCSV(FILE* fh, int * rows_out, bool has_header)
     if (has_header)
     {
         fgets(buffer, 1024, fh);
-        strtok(buffer, ",");
-        while (strtok(NULL, ",")) {; } // fast through first line 
     }
 
     // While-loop that goes through each line of the .csv-file and writes it to buffer[].
